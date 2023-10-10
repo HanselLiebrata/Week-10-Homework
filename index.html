@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+
+<body>
+  <div id="map"></div>
+  <div id="lineChart"></div>
+  <script>
+    const mapSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": "Percentage of Internet Users by Country",
+      "width": 1000,
+      "height": 500,
+      "data": {
+        "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-9-Homework/master/data/Final.csv"
+      },
+      "selection": {
+        "yearSlider": {
+          "type": "single",
+          "bind": {
+            "input": "range",
+            "min": 1990,
+            "max": 2020,
+            "step": 1,
+            "name": "Select Year"
+          },
+          "init": { "Year": 2020 }
+        }
+      }
+      ,
+      "transform": [
+        {
+          "lookup": "Entity",
+          "from": {
+            "data": {
+              "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-9-Homework/master/js/ne_110m.json",
+              "format": { "type": "topojson", "feature": "ne_110m_admin_0_countries" }
+            },
+            "key": "properties.NAME"
+          },
+          "as": "geometry"
+        },
+        {
+          "filter": "datum.Year == yearSlider_Year"
+        }
+      ],
+      "projection": { "type": "equalEarth" },
+      "mark": { "type": "geoshape", "stroke": "white" },
+      "encoding": {
+        "shape": {
+          "field": "geometry",
+          "type": "geojson"
+        },
+        "color": {
+          "field": "Internet Users(%)",
+          "type": "quantitative"
+        },
+        "tooltip": [
+          { "field": "Entity", "type": "nominal", "title": "Country" },
+          { "field": "Internet Users(%)", "type": "quantitative", "title": "Internet Users (%)" }
+        ]
+      }
+    };
+    vegaEmbed("#map", mapSpec).catch(console.warn);
+
+    const countryList = ['Afghanistan', 'Albania', 'Algeria', 'American Samoa', 'Andorra', 'Angola',
+      'Antigua and Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Australia', 'Austria',
+      'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus',
+      'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia',
+      'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands',
+      'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon',
+      'Canada', 'Cape Verde', 'Cayman Islands', 'Central African Republic', 'Chad',
+      'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Costa Rica', "Cote d'Ivoire",
+      'Croatia', 'Cuba', 'Curacao', 'Cyprus', 'Czechia',
+      'Democratic Republic of Congo', 'Denmark', 'Djibouti', 'Dominica',
+      'Dominican Republic', 'East Asia and Pacific', 'Ecuador', 'Egypt',
+      'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini',
+      'Ethiopia', 'Europe and Central Asia', 'European Union', 'Faeroe Islands',
+      'Fiji', 'Finland', 'France', 'French Polynesia', 'Gabon', 'Gambia', 'Georgia',
+      'Germany', 'Ghana', 'Gibraltar', 'Greece', 'Greenland', 'Grenada', 'Guam',
+      'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'High income',
+      'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran',
+      'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan',
+      'Kenya', 'Kiribati', 'Kosovo', 'Kuwait', 'Kyrgyzstan', 'Laos',
+      'Latin America and Caribbean', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia',
+      'Libya', 'Liechtenstein', 'Lithuania', 'Low and middle income', 'Low income',
+      'Lower middle income', 'Luxembourg', 'Macao', 'Madagascar', 'Malawi',
+      'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania',
+      'Mauritius', 'Mexico', 'Micronesia (country)',
+      'Middle East and North Africa', 'Middle income', 'Moldova', 'Monaco',
+      'Mongolia', 'Montenegro', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia',
+      'Nauru', 'Nepal', 'Netherlands', 'New Caledonia', 'New Zealand', 'Nicaragua',
+      'Niger', 'Nigeria', 'North America', 'North Korea', 'North Macedonia',
+      'Northern Mariana Islands', 'Norway', 'Oman', 'Pakistan', 'Palau', 'Palestine',
+      'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland',
+      'Portugal', 'Puerto Rico', 'Qatar', 'Romania', 'Russia', 'Rwanda',
+      'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Vincent and the Grenadines',
+      'Samoa', 'San Marino', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal',
+      'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore',
+      'Sint Maarten (Dutch part)', 'Slovakia', 'Slovenia', 'Solomon Islands',
+      'Somalia', 'South Africa', 'South Asia', 'South Korea', 'South Sudan', 'Spain',
+      'Sri Lanka', 'Sub-Saharan Africa', 'Sudan', 'Suriname', 'Sweden',
+      'Switzerland', 'Syria', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor', 'Togo',
+      'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks and Caicos Islands',
+      'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States',
+      'United States Virgin Islands', 'Upper middle income', 'Uruguay', 'Uzbekistan',
+      'Vanuatu', 'Venezuela', 'Vietnam', 'World', 'Yemen', 'Zambia', 'Zimbabwe'];
+
+    const lineChart = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "title": "Internet and Cellular Usage Over Time",
+      "width": 600,
+      "height": 400,
+      "data": {
+        "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-9-Homework/master/data/Final.csv"
+      },
+      "selection": {
+        "CountrySelection": {
+          "type": "single",
+          "fields": ["Entity"],
+          "bind": {
+            "input": "select",
+            "options": [null, ...countryList],
+            "name": "Select Country"
+          },
+          "init": { "Entity": "Canada" }
+        }
+      },
+      "transform": [
+        {
+          "filter": "datum.Entity == CountrySelection.Entity"
+        }
+      ],
+      "mark": "line",
+      "encoding": {
+        "x": {
+          "field": "Year",
+          "type": "ordinal",
+          "title": "Year"
+        },
+        "y": {
+          "field": "Internet Users(%)",
+          "type": "quantitative",
+          "title": "Internet Users (%)"
+        },
+
+        "tooltip": [
+          { "field": "Year", "type": "ordinal" },
+          { "field": "Internet Users(%)", "type": "quantitative" },
+          { "field": "Cellular Subscription", "type": "quantitative" },
+          { "field": "Broadband Subscription", "type": "quantitative" }
+        ]
+      }
+    };
+    vegaEmbed("#lineChart", lineChart).catch(console.warn);
+  </script>
+</body>
+
+</html>
