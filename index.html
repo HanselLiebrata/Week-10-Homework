@@ -17,7 +17,7 @@
       "width": 1000,
       "height": 500,
       "data": {
-        "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-10-Homework/master/data/Final.csv"
+        "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-9-Homework/master/data/Final.csv"
       },
       "selection": {
         "yearSlider": {
@@ -38,7 +38,7 @@
           "lookup": "Entity",
           "from": {
             "data": {
-              "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-10-Homework/master/js/ne_110m.json",
+              "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-9-Homework/master/js/ne_110m.json",
               "format": { "type": "topojson", "feature": "ne_110m_admin_0_countries" }
             },
             "key": "properties.NAME"
@@ -119,45 +119,45 @@
       "data": {
         "url": "https://raw.githubusercontent.com/HanselLiebrata/Week-10-Homework/master/data/Final.csv"
       },
-      "selection": {
-        "CountrySelection": {
-          "type": "single",
-          "fields": ["Entity"],
-          "bind": {
-            "input": "select",
-            "options": [null, ...countryList],
-            "name": "Select Country"
-          },
-          "init": { "Entity": "Canada" }
-        }
-      },
       "transform": [
-        {
-          "filter": "datum.Entity == CountrySelection.Entity"
-        }
+        { "filter": "datum.Entity == 'Canada'" }
       ],
-      "mark": "line",
-      "encoding": {
-        "x": {
-          "field": "Year",
-          "type": "ordinal",
-          "title": "Year"
+      "layer": [
+        {
+          "mark": "line",
+          "encoding": {
+            "x": { "field": "Year", "type": "ordinal", "title": "Year" },
+            "y": { "field": "Internet Users(%)", "type": "quantitative", "title": "Internet Users (%)" }
+          }
         },
-        "y": {
-          "field": "Internet Users(%)",
-          "type": "quantitative",
-          "title": "Internet Users (%)"
+        {
+          "data": { "values": [{ "Year": "2000", "Internet Users(%)": 50, "Note": "Significant rise in usage" }] }, // Explicit data for annotation
+          "mark": { "type": "text", "align": "left", "baseline": "middle", "dy": -10 },
+          "encoding": {
+            "x": { "field": "Year", "type": "ordinal" },
+            "y": { "field": "Internet Users(%)", "type": "quantitative" },
+            "text": { "field": "Note", "type": "nominal" }
+          }
         },
-
-        "tooltip": [
-          { "field": "Year", "type": "ordinal" },
-          { "field": "Internet Users(%)", "type": "quantitative" },
-          { "field": "Cellular Subscription", "type": "quantitative" },
-          { "field": "Broadband Subscription", "type": "quantitative" }
-        ]
-      }
+        {
+          "mark": "rule",
+          "encoding": {
+            "x": { "datum": "2001", "type": "ordinal" },
+          }
+        },
+        {
+          "mark": { "type": "text", "align": "left", "baseline": "bottom", "dx": 10 },
+          "encoding": {
+            "x": { "datum": "2001", "type": "ordinal" },
+            "y": { "value": 0 },
+            "text": { "value": "2005" }
+          }
+        }
+      ]
     };
     vegaEmbed("#lineChart", lineChart).catch(console.warn);
+
+
   </script>
 </body>
 
